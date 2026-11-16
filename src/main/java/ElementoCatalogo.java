@@ -1,19 +1,23 @@
-public abstract class ElementoCatalogo extends Entidad{
-    private String nombre;
+public abstract class ElementoCatalogo extends Entidad implements Habilitable {
 
-    public ElementoCatalogo(String codigo, String nombre) {
+    protected String nombre;
+
+    protected ElementoCatalogo(String codigo, String nombre) throws DatoInvalidoException {
         super(codigo);
-        this.nombre = nombre;
+        setNombre(nombre);
     }
+
+    protected void setNombre(String nombre) throws DatoInvalidoException {
+        Validador.texto(nombre, "nombre");
+        this.nombre = nombre.trim();
+    }
+
     public String getNombre() {
         return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return codigo + " - " + nombre;
     }
 }

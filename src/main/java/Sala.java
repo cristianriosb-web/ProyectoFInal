@@ -1,76 +1,84 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Sala {
-    private String codigo;
-    private String nombre;
-    private int capacidad;
-    private EstadoSala estado;
-    private List<Asiento> asientos;
+public class Sala extends ElementoCatalogo {
 
-    public Sala(String codigo, String nombre, int capacidad, EstadoSala estado, List<Asiento> asientos) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.capacidad = capacidad;
-        this.estado = estado;
-        this.asientos = new ArrayList<>();
+    public static final int MAX_FILAS = 26; // letras A..Z
+
+    private int filas;
+    private int asientosPorFila;
+    private EstadoSala estado;
+    private final List<Asiento> asientos = new ArrayList<>();
+
+    public Sala(String codigo, String nombre, int filas, int asientosPorFila) throws DatoInvalidoException {
+        super(codigo, nombre);
+        actualizar(nombre, filas, asientosPorFila);
+        this.estado = EstadoSala.DISPONIBLE;
+    }
+
+    public void actualizar(String nombre, int filas, int asientosPorFila) throws DatoInvalidoException {
+        Validador.positivo(filas, "filas");
+        Validador.positivo(asientosPorFila, "asientos por fila");
+        if (filas > MAX_FILAS) {
+            throw new DatoInvalidoException("Una sala puede tener máximo " + MAX_FILAS + " filas");
+        }
+        setNombre(nombre);
+        this.filas = filas;
+        this.asientosPorFila = asientosPorFila;
         generarAsientos();
     }
-    public String getCodigo() {
-        return codigo;
-    }
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-    public int getCapacidad() {
-        return capacidad;
-    }
-    public void setCapacidad(int capacidad) {
-        this.capacidad = capacidad;
-    }
-    public EstadoSala getEstado() {
-        return estado;
-    }
-    public void setEstado(EstadoSala estado) {
-        this.estado = estado;
-    }
-    public List<Asiento> getAsientos() {
-        return asientos;
-    }
-    public void setAsientos(List<Asiento> asientos) {
-        this.asientos = asientos;
-    }
-    @Override
-    public String toString() {
-        return "Sala{" + "codigo=" + codigo + ", nombre=" + nombre + ", capacidad=" + capacidad + ", estado=" + estado + ", asientos=" + asientos + '}';
-    }
-    public void generarAsientos(){
-        this.asientos.clear();
-        int asientosPorFila=12;
-        char fila='A';
-        int numeroFila=1;
-        for(int i=0;i<this.capacidad;i++){
-            String codigoAsiento = ""+fila+numeroFila;
-            Asiento asiento = new Asiento(codigoAsiento, fila, numeroFila, EstadoAsiento.DISPONIBLE);
-            this.asientos.add(asiento);
-            numeroFila++;
-            if(numeroFila>asientosPorFila){
-                numeroFila=1;
-                fila++;
+
+    private void generarAsientos() {
+        asientos.clear();
+        for (int f = 0; f < filas; f++) {
+            char letra = (char) ('A' + f);
+            for (int n = 1; n <= asientosPorFila; n++) {
+                asientos.add(new Asiento(letra, n));
             }
         }
     }
-    public List<Asiento> clonarAsientos() {
+
+    public List<Asiento> crearCopiaAsientos() {
         List<Asiento> copia = new ArrayList<>();
-        for (Asiento a : this.asientos) {
-            copia.add(new Asiento(a.getCodigo(), a.getFila(), a.getNumero(), EstadoAsiento.DISPONIBLE));
+        for (Asiento a : asientos) {
+            copia.add(a.copiar());
         }
         return copia;
+    }
+
+    public int getCapacidad() {
+        return filas * asientosPorFila;
+    }
+
+    @Override
+    public boolean estaDisponible() {
+        return estado == EstadoSala.DISPONIBLE;
+    }
+
+    @Override
+    public void deshabilitar() {
+        estado = EstadoSala.FUERA_DE_SERVICIO;
+    }
+
+    @Override
+    public void habilitar() {
+        estado = EstadoSala.DISPONIBLE;
+    }
+
+    public int getFilas() {
+        return filas;
+    }
+
+    public int getAsientosPorFila() {
+        return asientosPorFila;
+    }
+
+    public EstadoSala getEstado() {
+        return estado;
+    }
+
+    public List<Asiento> getAsientos() {
+        return Collections.unmodifiableList(asientos);
     }
 }

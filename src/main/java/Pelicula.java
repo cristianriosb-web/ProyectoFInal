@@ -1,58 +1,56 @@
-public class Pelicula {
-    private String nombre;
+
+public class Pelicula extends ElementoCatalogo {
+
     private String genero;
     private int duracionMinutos;
     private ClasificacionPelicula clasificacion;
     private EstadoPelicula estado;
 
-    public Pelicula(String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion, EstadoPelicula estado) {
-        this.nombre = nombre;
-        this.genero = genero;
+    public Pelicula(String codigo, String nombre, String genero, int duracionMinutos,
+                    ClasificacionPelicula clasificacion) throws DatoInvalidoException {
+        super(codigo, nombre);
+        actualizar(nombre, genero, duracionMinutos, clasificacion);
+        this.estado = EstadoPelicula.DISPONIBLE;
+    }
+
+    public void actualizar(String nombre, String genero, int duracionMinutos,
+                           ClasificacionPelicula clasificacion) throws DatoInvalidoException {
+        Validador.texto(genero, "género");
+        Validador.positivo(duracionMinutos, "duración");
+        Validador.noNulo(clasificacion, "clasificación");
+        setNombre(nombre);
+        this.genero = genero.trim();
         this.duracionMinutos = duracionMinutos;
         this.clasificacion = clasificacion;
-        this.estado = estado;
+    }
 
+    @Override
+    public boolean estaDisponible() {
+        return estado == EstadoPelicula.DISPONIBLE;
     }
-    public String getNombre() {
-        return nombre;
+
+    @Override
+    public void deshabilitar() {
+        estado = EstadoPelicula.NO_DISPONIBLE;
     }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    @Override
+    public void habilitar() {
+        estado = EstadoPelicula.DISPONIBLE;
     }
+
     public String getGenero() {
         return genero;
     }
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
+
     public int getDuracionMinutos() {
         return duracionMinutos;
     }
-    public void setDuracionMinutos(int duracionMinutos) {
-        this.duracionMinutos = duracionMinutos;
-    }
+
     public ClasificacionPelicula getClasificacion() {
         return clasificacion;
     }
-    public void setClasificacion(ClasificacionPelicula clasificacion) {
-        this.clasificacion = clasificacion;
-    }
+
     public EstadoPelicula getEstado() {
         return estado;
-    }
-    public void setEstado(EstadoPelicula estado) {
-        this.estado = estado;
-    }
-    @Override
-    public String toString() {
-        return "Pelicula{" + "nombre=" + nombre + ", genero=" + genero + ", duracionMinutos=" + duracionMinutos + ", clasificacion=" + clasificacion + ", estado=" + estado + '}';
-    }
-    public String habilitar(){
-        this.estado = EstadoPelicula.DISPONIBLE;
-        return "Pelicula habilitada";
-    }
-    public String deshabilitar(){
-        this.estado = EstadoPelicula.NO_DISPONIBLE;
-        return "Pelicula deshabilitada";
     }
 }

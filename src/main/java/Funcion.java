@@ -1,129 +1,134 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Funcion {
-    private String codigo;
-    private Pelicula pelicula;
-    private Sala sala;
+public class Funcion extends Entidad implements Cancelable, Comparable<Funcion> {
+
+    private final Pelicula pelicula;
+    private final Sala sala;
     private LocalDate fecha;
     private LocalTime hora;
-    private double precioBase;
+    private double valorBase;
     private EstadoFuncion estado;
-    private List<Asiento> asientos;
+    private final List<Asiento> asientos;
 
-    public Funcion(String codigo, Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase, EstadoFuncion estado, List<Asiento> asientos) {
-        this.codigo = codigo;
+    public Funcion(String codigo, Pelicula pelicula, Sala sala, LocalDate fecha,
+                   LocalTime hora, double valorBase) throws DatoInvalidoException {
+        super(codigo);
+        Validador.noNulo(pelicula, "una película");
+        Validador.noNulo(sala, "una sala");
         this.pelicula = pelicula;
         this.sala = sala;
+        actualizar(fecha, hora, valorBase);
+        this.estado = EstadoFuncion.PROGRAMADA;
+        this.asientos = new ArrayList<>(sala.crearCopiaAsientos());
+    }
+
+    public void actualizar(LocalDate fecha, LocalTime hora, double valorBase) throws DatoInvalidoException {
+        Validador.noNulo(fecha, "una fecha");
+        Validador.noNulo(hora, "una hora");
+        Validador.positivo(valorBase, "valor base");
         this.fecha = fecha;
         this.hora = hora;
-        this.precioBase = precioBase;
-        this.estado = estado;
-      actualizarAsientos(asientos);
+        this.valorBase = valorBase;
     }
-    public void actualizarAsientos(List<Asiento> asientos){
-       if(this.sala != null){
-           this.asientos=this.sala.clonarAsientos();
-       }
-    }
-    public Asiento buscarAsiento(String codigoAsiento){
-        for(Asiento asiento:asientos){
-        if(asiento.getCodigo().equals(codigoAsiento)){
-            return asiento;
-        }}
-        return null;
-    }
-    public int contarDisponibles(){
-        int disponibles =0;
-        for(Asiento asiento:asientos){
-            if(asiento.estaDisponible()){
-                disponibles++;
+
+    public Asiento buscarAsiento(String codigoAsiento) throws AsientoNoEncontradoException {
+        if (codigoAsiento != null) {
+            for (Asiento a : asientos) {
+                if (a.getCodigo().equalsIgnoreCase(codigoAsiento.trim())) {
+                    return a;
+                }
             }
         }
-        return disponibles;
+        throw new AsientoNoEncontradoException("El asiento " + codigoAsiento
+                + " no existe en la sala " + sala.getNombre());
     }
-    public int contarOcupados(){
-        return asientos.size()-contarDisponibles();
+
+    public int getTotalAsientos() {
+        return asientos.size();
     }
-    public boolean hayAsientosDisponibles(){
-        return contarDisponibles()>0;
-    }
-    public List<Asiento> getAsientosDisponibles(){
-        List<Asiento> disponibles = new java.util.ArrayList<>();
-        for(Asiento asiento:asientos){
-            if(asiento.estaDisponible()){
-                disponibles.add(asiento);
+
+    public int contarDisponibles() {
+        int contador = 0;
+        for (Asiento a : asientos) {
+            if (a.estaDisponible()) {
+                contador++;
             }
         }
-        return disponibles;
+        return contador;
     }
-    public boolean estaProgramada(){
-        return this.estado == EstadoFuncion.PROGRAMADA;
+
+    public int contarOcupados() {
+        return getTotalAsientos() - contarDisponibles();
     }
-    public void cancelar(){
-        this.estado = EstadoFuncion.CANCELADA;
+
+    public boolean hayAsientosDisponibles() {
+        return contarDisponibles() > 0;
     }
-    public void finalizar(){
-        this.estado = EstadoFuncion.FINALIZADA;
+
+    public List<Asiento> getAsientosDisponibles() {
+        List<Asiento> libres = new ArrayList<>();
+        for (Asiento a : asientos) {
+            if (a.estaDisponible()) {
+                libres.add(a);
+            }
+        }
+        return libres;
     }
-    public int compareTo(Funcion otra){
-        return this.fecha.compareTo(otra.fecha);
+
+    public boolean estaProgramada() {
+        return estado == EstadoFuncion.PROGRAMADA;
     }
-    public String getCodigo() {
-        return codigo;
+
+    public void finalizar() {
+        estado = EstadoFuncion.FINALIZADA;
     }
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+
+    @Override
+    public void cancelar() {
+        estado = EstadoFuncion.CANCELADA;
     }
+
     public Pelicula getPelicula() {
         return pelicula;
     }
-    public void setPelicula(Pelicula pelicula) {
-        this.pelicula = pelicula;
-    }
+
     public Sala getSala() {
         return sala;
     }
-    public void setSala(Sala sala) {
-        this.sala = sala;
-        actualizarAsientos(sala.getAsientos());
-    }
+
     public LocalDate getFecha() {
         return fecha;
     }
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
+
     public LocalTime getHora() {
         return hora;
     }
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
+
+    public double getValorBase() {
+        return valorBase;
     }
-    public double getPrecioBase() {
-        return precioBase;
-    }
-    public void setPrecioBase(double precioBase) {
-        this.precioBase = precioBase;
-    }
+
     public EstadoFuncion getEstado() {
         return estado;
     }
-    public void setEstado(EstadoFuncion estado) {
-        this.estado = estado;
-    }
+
     public List<Asiento> getAsientos() {
-        return asientos;
+        return Collections.unmodifiableList(asientos);
     }
-    public void setAsientos(List<Asiento> asientos) {
-        this.asientos = asientos;
+
+    @Override
+    public int compareTo(Funcion otra) {
+        int porFecha = fecha.compareTo(otra.fecha);
+        return porFecha != 0 ? porFecha : hora.compareTo(otra.hora);
     }
-    public int getTotalAsientos(){
-        return asientos.size();
-    }
+
     @Override
     public String toString() {
-        return "Funcion{" + "codigo=" + codigo + ", pelicula=" + pelicula + ", sala=" + sala + ", fecha=" + fecha + ", hora=" + hora + ", precioBase=" + precioBase + ", estado=" + estado + ", asientos=" + asientos + '}';
+        return codigo + " - " + pelicula.getNombre() + " | " + sala.getNombre()
+                + " | " + fecha + " " + hora;
     }
 }

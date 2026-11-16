@@ -1,5 +1,5 @@
 public abstract class Entidad implements Identificable{
-    private String codigo;
+    public String codigo;
     public Entidad(String codigo) {
         this.codigo = codigo;
     }
