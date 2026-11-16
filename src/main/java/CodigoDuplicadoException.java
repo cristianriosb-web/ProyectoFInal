@@ -1,5 +1,5 @@
-public class CodigoDuplicadoException extends RuntimeException {
-    public CodigoDuplicadoException(String message) {
-        super(message);
+public class CodigoDuplicadoException extends CinemaException {
+    public CodigoDuplicadoException(String mensaje) {
+        super(mensaje);
     }
 }
