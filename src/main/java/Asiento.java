@@ -19,7 +19,7 @@ public class Asiento implements Identificable {
     public void ocupar(){
         this.estado = EstadoAsiento.OCUPADO;
     }
-    public void librerar(){
+    public void liberar(){
         this.estado = EstadoAsiento.DISPONIBLE;
     }
     public String getCodigo() {
