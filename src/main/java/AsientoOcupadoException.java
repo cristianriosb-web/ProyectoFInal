@@ -1,4 +1,4 @@
-public class AsientoOcupadoException extends Exception{
+public class AsientoOcupadoException extends CinemaException {
     public AsientoOcupadoException(String mensaje) {
         super(mensaje);
     }

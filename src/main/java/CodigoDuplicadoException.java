@@ -1,2 +1,5 @@
-public class CodigoDuplicadoException extends Exception{
+public class CodigoDuplicadoException extends RuntimeException {
+    public CodigoDuplicadoException(String message) {
+        super(message);
+    }
 }
