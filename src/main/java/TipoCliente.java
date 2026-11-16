@@ -4,15 +4,14 @@ public enum TipoCliente {
     INFANTE(12000.0),
     ADULTO_MAYOR(12000.0);
 
-    private final double descuentoPorDefecto;
+    private final double tarifaCliente;
 
-    TipoCliente(double descuentoPorDefecto) {
-        this.descuentoPorDefecto = descuentoPorDefecto;
+    TipoCliente(double tarifaCliente) {
+        this.tarifaCliente = tarifaCliente;
     }
 
-    /** Porcentaje de descuento por defecto (0 a 100). */
-    public double getDescuentoPorDefecto() {
-        return descuentoPorDefecto;
+    public double getTarifaCliente() {
+        return tarifaCliente;
     }
 
 }

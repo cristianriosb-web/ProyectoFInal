@@ -16,7 +16,7 @@ public class Cinema implements Reportable {
     public Cinema(String nombre) {
         this.nombre = nombre;
         for (TipoCliente tipo : TipoCliente.values()) {
-            descuentos.put(tipo, tipo.getDescuentoPorDefecto());
+            descuentos.put(tipo, tipo.getTarifaCliente());
         }
     }
 
