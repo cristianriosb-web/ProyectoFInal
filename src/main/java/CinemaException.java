@@ -1,5 +1,5 @@
-public class CinemaException extends RuntimeException {
-    public CinemaException(String message) {
-        super(message);
+public class CinemaException extends Exception {
+    public CinemaException(String mensaje) {
+        super(mensaje);
     }
 }
