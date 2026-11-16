@@ -1,14 +1,26 @@
-public class Asiento {
+public class Asiento implements Identificable {
     private String codigo;
     private char fila;
     private int numero;
     private EstadoAsiento estado;
 
-    public Asiento(String codigo, char fila, int numero, EstadoAsiento estado) {
-        this.codigo = codigo;
+    public Asiento( char fila, int numero) {
         this.fila = fila;
         this.numero = numero;
-        this.estado = estado;
+        this.codigo = ""+fila+numero;
+        this.estado = EstadoAsiento.DISPONIBLE;
+    }
+    public Asiento copiar(){
+        return new Asiento(this.fila, this.numero);
+    }
+    public boolean estaDisponible(){
+        return this.estado == EstadoAsiento.DISPONIBLE;
+    }
+    public void ocupar(){
+        this.estado = EstadoAsiento.OCUPADO;
+    }
+    public void librerar(){
+        this.estado = EstadoAsiento.DISPONIBLE;
     }
     public String getCodigo() {
         return codigo;
@@ -38,15 +50,5 @@ public class Asiento {
     public String toString() {
         return "Asiento{" + "codigo=" + codigo + ", fila=" + fila + ", numero=" + numero + ", estado=" + estado + '}';
     }
-    public String ocupar(){
-        this.estado = EstadoAsiento.OCUPADO;
-        return "Asiento ocupado";
-    }
-    public String librerar(){
-        this.estado = EstadoAsiento.DISPONIBLE;
-        return "Asiento liberado";
-    }
-    public boolean estaDisponible(){
-        return this.estado == EstadoAsiento.DISPONIBLE;
-    }
+
 }

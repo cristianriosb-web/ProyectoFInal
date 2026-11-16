@@ -14,6 +14,6 @@ public abstract class ElementoCatalogo extends Entidad{
 
     @Override
     public String toString() {
-        return super.toString();
+        return codigo+""+nombre;
     }
 }

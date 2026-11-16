@@ -1,23 +1,34 @@
-public class Pelicula {
-    private String nombre;
+public class Pelicula extends ElementoCatalogo implements Habilitable{
     private String genero;
     private int duracionMinutos;
     private ClasificacionPelicula clasificacion;
     private EstadoPelicula estado;
 
-    public Pelicula(String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion, EstadoPelicula estado) {
-        this.nombre = nombre;
+    public Pelicula(String codigo,String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion) {
+        super(codigo,nombre);
         this.genero = genero;
         this.duracionMinutos = duracionMinutos;
         this.clasificacion = clasificacion;
-        this.estado = estado;
+        this.estado = EstadoPelicula.DISPONIBLE;
 
     }
-    public String getNombre() {
-        return nombre;
+    public void actualizar(String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion){
+        setNombre(nombre);
+        this.genero = genero;
+        this.duracionMinutos = duracionMinutos;
+        this.clasificacion = clasificacion;
     }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    @Override
+    public boolean estaDisponible() {
+        return this.estado.equals(EstadoPelicula.DISPONIBLE);
+    }
+    @Override
+    public void habilitar(){
+        this.estado = EstadoPelicula.DISPONIBLE;
+    }
+    @Override
+    public void deshabilitar(){
+        this.estado = EstadoPelicula.NO_DISPONIBLE;
     }
     public String getGenero() {
         return genero;
@@ -45,14 +56,6 @@ public class Pelicula {
     }
     @Override
     public String toString() {
-        return "Pelicula{" + "nombre=" + nombre + ", genero=" + genero + ", duracionMinutos=" + duracionMinutos + ", clasificacion=" + clasificacion + ", estado=" + estado + '}';
-    }
-    public String habilitar(){
-        this.estado = EstadoPelicula.DISPONIBLE;
-        return "Pelicula habilitada";
-    }
-    public String deshabilitar(){
-        this.estado = EstadoPelicula.NO_DISPONIBLE;
-        return "Pelicula deshabilitada";
+        return "Pelicula{" + ", genero=" + genero + ", duracionMinutos=" + duracionMinutos + ", clasificacion=" + clasificacion + ", estado=" + estado + '}';
     }
 }

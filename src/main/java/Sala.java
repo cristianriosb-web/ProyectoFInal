@@ -1,39 +1,71 @@
+import javax.swing.text.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sala {
-    private String codigo;
-    private String nombre;
-    private int capacidad;
+public class Sala extends ElementoCatalogo implements Habilitable{
+    private int filas;
+    private int asientosPorFila;
     private EstadoSala estado;
     private List<Asiento> asientos;
 
-    public Sala(String codigo, String nombre, int capacidad, EstadoSala estado, List<Asiento> asientos) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.capacidad = capacidad;
-        this.estado = estado;
+    public Sala(String codigo,String nombre,int filas,int asientosPorFila) {
+        super(codigo,nombre);
+        this.filas = filas;
+        this.asientosPorFila = asientosPorFila;
+        this.estado = EstadoSala.DISPONIBLE;
         this.asientos = new ArrayList<>();
-        generarAsientos();
+        generarAsientos(getFilas(),getAsientosPorFila());
     }
-    public String getCodigo() {
-        return codigo;
+    public void actualizar(String nombre, int filas, int asientosPorFila){
+        setNombre(nombre);
+        this.filas = filas;
+        this.asientosPorFila = asientosPorFila;
+        generarAsientos(getFilas(),getAsientosPorFila());
     }
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void generarAsientos(int filas, int asientosPorFila){
+       this.asientos.clear();
+       for(int i=0;i<this.filas;i++){
+           char letra = (char)('A'+i);
+           for(int num =1;num<=this.asientosPorFila;num++){
+            this.asientos.add(new Asiento(letra,num));
+           }
+       }
     }
-    public String getNombre() {
-        return nombre;
+    public List<Asiento> crearCopiaAsientos(){
+        List<Asiento> copia = new ArrayList<>();
+        for(Asiento asiento:this.asientos){
+            copia.add(asiento.copiar());
+        }
+        return copia;
     }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public int getCapacidad(){
+        return filas*asientosPorFila;
     }
-    public int getCapacidad() {
-        return capacidad;
+
+    @Override
+    public boolean estaDisponible() {
+        return false;
     }
-    public void setCapacidad(int capacidad) {
-        this.capacidad = capacidad;
+
+    @Override
+    public void habilitar() {
+
     }
+
+    @Override
+    public void deshabilitar() {
+
+    }
+    public int getFilas() {
+        return filas;
+    }
+    public void setFilas(int filas) {
+        this.filas = filas;
+    }
+    public int getAsientosPorFila() {
+        return asientosPorFila;
+    }
+    public void setAsientosPorFila(int asientosPorFila) {}
     public EstadoSala getEstado() {
         return estado;
     }
@@ -48,29 +80,7 @@ public class Sala {
     }
     @Override
     public String toString() {
-        return "Sala{" + "codigo=" + codigo + ", nombre=" + nombre + ", capacidad=" + capacidad + ", estado=" + estado + ", asientos=" + asientos + '}';
+        return "Sala{" +   ", estado=" + estado + ", asientos=" + asientos + '}';
     }
-    public void generarAsientos(){
-        this.asientos.clear();
-        int asientosPorFila=12;
-        char fila='A';
-        int numeroFila=1;
-        for(int i=0;i<this.capacidad;i++){
-            String codigoAsiento = ""+fila+numeroFila;
-            Asiento asiento = new Asiento(codigoAsiento, fila, numeroFila, EstadoAsiento.DISPONIBLE);
-            this.asientos.add(asiento);
-            numeroFila++;
-            if(numeroFila>asientosPorFila){
-                numeroFila=1;
-                fila++;
-            }
-        }
-    }
-    public List<Asiento> clonarAsientos() {
-        List<Asiento> copia = new ArrayList<>();
-        for (Asiento a : this.asientos) {
-            copia.add(new Asiento(a.getCodigo(), a.getFila(), a.getNumero(), EstadoAsiento.DISPONIBLE));
-        }
-        return copia;
-    }
+
 }

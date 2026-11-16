@@ -1,9 +1,9 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Funcion {
-    private String codigo;
+public class Funcion extends Entidad implements Comparable<Funcion>,Cancelable{
     private Pelicula pelicula;
     private Sala sala;
     private LocalDate fecha;
@@ -12,31 +12,37 @@ public class Funcion {
     private EstadoFuncion estado;
     private List<Asiento> asientos;
 
-    public Funcion(String codigo, Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase, EstadoFuncion estado, List<Asiento> asientos) {
-        this.codigo = codigo;
+    public Funcion( String codigo,Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase, EstadoFuncion estado, List<Asiento> asientos) {
+        super(codigo);
         this.pelicula = pelicula;
         this.sala = sala;
         this.fecha = fecha;
         this.hora = hora;
         this.precioBase = precioBase;
-        this.estado = estado;
-      actualizarAsientos(asientos);
+        this.estado = EstadoFuncion.PROGRAMADA;
+        this.asientos = sala.crearCopiaAsientos();
     }
-    public void actualizarAsientos(List<Asiento> asientos){
-       if(this.sala != null){
-           this.asientos=this.sala.clonarAsientos();
+    public void actualizar(Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase){
+       this.pelicula=pelicula;
+       this.fecha=fecha;
+       this.hora=hora;
+       this.precioBase=precioBase;
+       if(this.sala!=sala){
+           this.sala=sala;
+           this.asientos=sala.crearCopiaAsientos();
        }
     }
     public Asiento buscarAsiento(String codigoAsiento){
         for(Asiento asiento:asientos){
         if(asiento.getCodigo().equals(codigoAsiento)){
             return asiento;
-        }}
+            }
+        }
         return null;
     }
     public int contarDisponibles(){
         int disponibles =0;
-        for(Asiento asiento:asientos){
+        for(Asiento asiento:this.asientos){
             if(asiento.estaDisponible()){
                 disponibles++;
             }
@@ -44,14 +50,14 @@ public class Funcion {
         return disponibles;
     }
     public int contarOcupados(){
-        return asientos.size()-contarDisponibles();
+        return this.asientos.size()-contarDisponibles();
     }
     public boolean hayAsientosDisponibles(){
         return contarDisponibles()>0;
     }
     public List<Asiento> getAsientosDisponibles(){
-        List<Asiento> disponibles = new java.util.ArrayList<>();
-        for(Asiento asiento:asientos){
+        List<Asiento> disponibles = new ArrayList<>();
+        for(Asiento asiento:this.asientos){
             if(asiento.estaDisponible()){
                 disponibles.add(asiento);
             }
@@ -61,14 +67,20 @@ public class Funcion {
     public boolean estaProgramada(){
         return this.estado == EstadoFuncion.PROGRAMADA;
     }
-    public void cancelar(){
-        this.estado = EstadoFuncion.CANCELADA;
-    }
     public void finalizar(){
         this.estado = EstadoFuncion.FINALIZADA;
     }
+    @Override
+    public void cancelar(){
+        this.estado = EstadoFuncion.CANCELADA;
+    }
+    @Override
     public int compareTo(Funcion otra){
-        return this.fecha.compareTo(otra.fecha);
+        int comparacionFecha= this.fecha.compareTo(otra.fecha);
+        if(comparacionFecha!=0){
+            return comparacionFecha;
+        }
+        return this.hora.compareTo(otra.hora);
     }
     public String getCodigo() {
         return codigo;
@@ -85,10 +97,9 @@ public class Funcion {
     public Sala getSala() {
         return sala;
     }
-    public void setSala(Sala sala) {
+   public void setSala(Sala sala) {
         this.sala = sala;
-        actualizarAsientos(sala.getAsientos());
-    }
+   }
     public LocalDate getFecha() {
         return fecha;
     }
@@ -120,7 +131,7 @@ public class Funcion {
         this.asientos = asientos;
     }
     public int getTotalAsientos(){
-        return asientos.size();
+        return this.asientos.size();
     }
     @Override
     public String toString() {
