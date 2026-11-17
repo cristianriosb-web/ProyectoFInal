@@ -33,7 +33,6 @@ public class Venta extends Entidad implements Cancelable {
     @Override
     public void cancelar() {
         if (!estaActiva()) {
-            String codigo = "";
             throw new VentaYaCanceladaException("La venta " + codigo + " ya estaba cancelada");
         }
         asiento.liberar();
@@ -41,7 +40,6 @@ public class Venta extends Entidad implements Cancelable {
     }
 
     public String generarTiquete() {
-        String codigo = "";
         return "========== CINEMAUQ ==========\n"
                 + "Venta:     " + codigo + "\n"
                 + "Cliente:   " + cliente + "\n"

@@ -44,16 +44,18 @@ public class Sala extends ElementoCatalogo implements Habilitable{
 
     @Override
     public boolean estaDisponible() {
-        return false;
+        return this.estado==EstadoSala.DISPONIBLE;
     }
 
     @Override
     public void habilitar() {
+        this.estado= EstadoSala.DISPONIBLE;
 
     }
 
     @Override
     public void deshabilitar() {
+        this.estado= EstadoSala.FUERA_DE_SERVICIO;
 
     }
     public int getFilas() {
@@ -65,7 +67,9 @@ public class Sala extends ElementoCatalogo implements Habilitable{
     public int getAsientosPorFila() {
         return asientosPorFila;
     }
-    public void setAsientosPorFila(int asientosPorFila) {}
+    public void setAsientosPorFila(int asientosPorFila) {
+        this.asientosPorFila = asientosPorFila;
+    }
     public EstadoSala getEstado() {
         return estado;
     }
