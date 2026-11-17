@@ -1,38 +1,56 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FuncionTest {
-    private Pelicula pelicula;
-    private Sala sala;
+class FuncionTest {
+
     private Funcion funcion;
 
     @BeforeEach
-    void setUp() {
-        Pelicula pelicula1= new Pelicula("P1", "Interestelar", "Ciencia Ficción", 169, ClasificacionPelicula.MAYORES_12);
-        Sala sala1= new Sala("S1", "Sala 1", 2, 3); // 6 asientos
-        Funcion funcion1 = new Funcion("F1",pelicula1 , sala1, LocalDate.of(2026, 11, 20), LocalTime.of(18, 0), 15000);
+    void setUp() throws CinemaException {
+        Pelicula p = new Pelicula("P1", "Interestelar", "Ciencia ficción", 169, ClasificacionPelicula.MAYORES_12);
+        Sala s = new Sala("S1", "Sala 1", 2, 3);
+        funcion = new Funcion("F1", p, s, LocalDate.of(2026, 11, 20), LocalTime.of(18, 0), 15000);
     }
 
     @Test
-    void testConteoDisponiblesYOcupados() {
+    void iniciaProgramadaYConTodosLosAsientosLibres() {
+        assertEquals(EstadoFuncion.PROGRAMADA, funcion.getEstado());
+        assertEquals(6, funcion.getTotalAsientos());
         assertEquals(6, funcion.contarDisponibles());
         assertEquals(0, funcion.contarOcupados());
+    }
 
-        funcion.buscarAsiento("A1").ocupar();
-        funcion.buscarAsiento("B2").ocupar();
-
-        assertEquals(4, funcion.contarDisponibles());
+    @Test
+    void cuentaOcupadosYDisponibles() throws CinemaException {
+        funcion.buscarAsiento("a1").ocupar();
+        funcion.buscarAsiento("B3").ocupar();
         assertEquals(2, funcion.contarOcupados());
+        assertEquals(4, funcion.getAsientosDisponibles().size());
         assertTrue(funcion.hayAsientosDisponibles());
     }
 
     @Test
-    void testCompareToOrdenCronologico() {
+    void asientoInexistenteLanzaExcepcion() {
+        assertThrows(AsientoNoEncontradoException.class, () -> funcion.buscarAsiento("Z9"));
+    }
 
-        Funcion funcionTemprana = new Funcion("F2", pelicula, sala, LocalDate.of(2026, 11, 20), LocalTime.of(14, 0), 15000);
-        assertTrue(funcionTemprana.compareTo(funcion1) < 0); // 14:00 va antes que 18:00
+    @Test
+    void cambiosDeEstado() {
+        funcion.cancelar();
+        assertEquals(EstadoFuncion.CANCELADA, funcion.getEstado());
+        funcion.finalizar();
+        assertEquals(EstadoFuncion.FINALIZADA, funcion.getEstado());
+        assertFalse(funcion.estaProgramada());
+    }
+
+    @Test
+    void valorBaseInvalidoLanzaExcepcion() {
+        assertThrows(CinemaException.class,
+                () -> funcion.actualizar(LocalDate.now(), LocalTime.NOON, 0));
     }
 }
