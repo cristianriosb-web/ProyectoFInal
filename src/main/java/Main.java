@@ -63,13 +63,13 @@ public class Main {
                     default:
                         System.out.println("Opción no válida");
                 }
-            } catch (CinemaException | FuncionNoEncontradaException | SinAsientosdisponiblesException e) {
+            } catch (CinemaException | FuncionNoEncontradaException | SinAsientosDisponiblesException e) {
                 System.out.println("ERROR: " + e.getMessage());
             }
         } while (opcion != 10);
     }
 
-    private static void venderEntrada() throws CinemaException, FuncionNoEncontradaException, SinAsientosdisponiblesException {
+    private static void venderEntrada() throws CinemaException, FuncionNoEncontradaException, SinAsientosDisponiblesException {
         List<Funcion> funciones = cinema.getFuncionesProgramadas();
         if (funciones.isEmpty()) {
             System.out.println("No hay funciones programadas.");
