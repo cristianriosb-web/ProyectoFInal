@@ -20,6 +20,7 @@ public class Cinema implements Reportable {
         }
     }
 
+    /** Busca cualquier objeto Identificable por código; devuelve null si no lo encuentra. */
     private static <T extends Identificable> T buscarPorCodigo(List<T> lista, String codigo) {
         for (T elemento : lista) {
             if (elemento.getCodigo().equalsIgnoreCase(codigo)) {
@@ -29,6 +30,7 @@ public class Cinema implements Reportable {
         return null;
     }
 
+    /** Filtra los elementos Habilitable que están disponibles. */
     private static <T extends Habilitable> List<T> filtrarDisponibles(List<T> lista) {
         List<T> resultado = new ArrayList<>();
         for (T elemento : lista) {
@@ -166,13 +168,13 @@ public class Cinema implements Reportable {
         throw new FuncionNoEncontradaException("No existe una función con el código " + codigo);
     }
 
-    public void modificarFuncion(String codigo, LocalDate fecha, LocalTime hora, double valorBase)
-            throws CinemaException, FuncionNoEncontradaException, SalaNoDisponibleException {
+    public void modificarFuncion(String codigo, LocalDate fecha, LocalTime hora, double precioBase)
+            throws CinemaException, SalaNoDisponibleException, FuncionNoEncontradaException {
         Funcion f = buscarFuncion(codigo);
         LocalDate fechaAnterior = f.getFecha();
         LocalTime horaAnterior = f.getHora();
-        double valorAnterior = f.getValorBase();
-        f.actualizar(fecha, hora, valorBase);
+        double valorAnterior = f.getPrecioBase();
+        f.actualizar(fecha, hora, precioBase);
         try {
             validarCruceHorario(f);
         } catch (SalaNoDisponibleException e) {
@@ -228,7 +230,7 @@ public class Cinema implements Reportable {
     }
 
     public double calcularValorEntrada(Funcion funcion, TipoCliente tipo) {
-        return Math.round(funcion.getValorBase() * (1 - getDescuento(tipo) / 100.0));
+        return Math.round(funcion.getPrecioBase() * (1 - getDescuento(tipo) / 100.0));
     }
 
     public Venta venderEntrada(String codigoFuncion, Cliente cliente, TipoCliente tipoEntrada,
@@ -261,6 +263,7 @@ public class Cinema implements Reportable {
         throw new VentaNoEncontradaException("No existe una venta con el código " + codigo);
     }
 
+    /** Cancela una venta existente y libera su asiento. */
     public void cancelarVenta(String codigo) throws VentaNoEncontradaException, VentaYaCanceladaException {
         buscarVenta(codigo).cancelar();
     }

@@ -12,7 +12,7 @@ public class Funcion extends Entidad implements Comparable<Funcion>,Cancelable{
     private EstadoFuncion estado;
     private List<Asiento> asientos;
 
-    public Funcion( String codigo,Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase, EstadoFuncion estado, List<Asiento> asientos) {
+    public Funcion( String codigo,Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase) {
         super(codigo);
         this.pelicula = pelicula;
         this.sala = sala;
@@ -22,15 +22,13 @@ public class Funcion extends Entidad implements Comparable<Funcion>,Cancelable{
         this.estado = EstadoFuncion.PROGRAMADA;
         this.asientos = sala.crearCopiaAsientos();
     }
-    public void actualizar(Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase){
-       this.pelicula=pelicula;
-       this.fecha=fecha;
-       this.hora=hora;
-       this.precioBase=precioBase;
-       if(this.sala!=sala){
-           this.sala=sala;
-           this.asientos=sala.crearCopiaAsientos();
-       }
+    public void actualizar(LocalDate fecha, LocalTime hora, double precioBase) throws DatoInvalidoException {
+        Validador.noNulo(fecha, "una fecha");
+        Validador.noNulo(hora, "una hora");
+        Validador.positivo(precioBase, "valor base");
+        this.fecha = fecha;
+        this.hora = hora;
+        this.precioBase = precioBase;
     }
     public Asiento buscarAsiento(String codigoAsiento){
         for(Asiento asiento:asientos){
