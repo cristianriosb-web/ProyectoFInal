@@ -7,7 +7,7 @@ public class SalaTest {
     private Sala sala;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DatoInvalidoException {
         sala = new Sala("S1", "Sala principal", 3, 4);
     }
 
@@ -20,7 +20,7 @@ public class SalaTest {
     }
 
     @Test
-    void testCrearCopiaAsientosIndependientes() {
+    void testCrearCopiaAsientosIndependientes() throws AsientoOcupadoException {
         List<Asiento> copia = sala.crearCopiaAsientos();
         copia.get(0).ocupar();
         assertTrue(sala.getAsientos().get(0).estaDisponible());

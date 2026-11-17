@@ -2,8 +2,9 @@ import java.util.Objects;
 
 public abstract class Entidad implements Identificable{
     protected String codigo;
-    public Entidad(String codigo) {
-        this.codigo = codigo;
+    public Entidad(String codigo) throws DatoInvalidoException {
+        Validador.texto(codigo, "código");
+        this.codigo = codigo.trim();
     }
     @Override
     public String getCodigo() {

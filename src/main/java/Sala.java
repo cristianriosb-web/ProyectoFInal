@@ -8,7 +8,7 @@ public class Sala extends ElementoCatalogo implements Habilitable{
     private EstadoSala estado;
     private List<Asiento> asientos;
 
-    public Sala(String codigo,String nombre,int filas,int asientosPorFila) {
+    public Sala(String codigo,String nombre,int filas,int asientosPorFila) throws DatoInvalidoException {
         super(codigo,nombre);
         this.filas = filas;
         this.asientosPorFila = asientosPorFila;
@@ -16,7 +16,7 @@ public class Sala extends ElementoCatalogo implements Habilitable{
         this.asientos = new ArrayList<>();
         generarAsientos(getFilas(),getAsientosPorFila());
     }
-    public void actualizar(String nombre, int filas, int asientosPorFila){
+    public void actualizar(String nombre, int filas, int asientosPorFila) throws DatoInvalidoException {
         setNombre(nombre);
         this.filas = filas;
         this.asientosPorFila = asientosPorFila;

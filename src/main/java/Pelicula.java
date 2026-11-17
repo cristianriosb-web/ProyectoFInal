@@ -4,17 +4,23 @@ public class Pelicula extends ElementoCatalogo implements Habilitable{
     private ClasificacionPelicula clasificacion;
     private EstadoPelicula estado;
 
-    public Pelicula(String codigo,String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion) {
-        super(codigo,nombre);
-        this.genero = genero;
+    public Pelicula(String codigo, String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion) throws DatoInvalidoException {
+        super(codigo, nombre);
+        Validador.texto(genero, "género");
+        Validador.positivo(duracionMinutos, "duración");
+        Validador.noNulo(clasificacion, "clasificación");
+        this.genero = genero.trim();
         this.duracionMinutos = duracionMinutos;
         this.clasificacion = clasificacion;
         this.estado = EstadoPelicula.DISPONIBLE;
-
     }
-    public void actualizar(String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion){
+
+    public void actualizar(String nombre, String genero, int duracionMinutos, ClasificacionPelicula clasificacion) throws DatoInvalidoException {
+        Validador.texto(genero, "género");
+        Validador.positivo(duracionMinutos, "duración");
+        Validador.noNulo(clasificacion, "clasificación");
         setNombre(nombre);
-        this.genero = genero;
+        this.genero = genero.trim();
         this.duracionMinutos = duracionMinutos;
         this.clasificacion = clasificacion;
     }

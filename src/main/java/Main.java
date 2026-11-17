@@ -63,7 +63,7 @@ public class Main {
                     default:
                         System.out.println("Opción no válida");
                 }
-            } catch (CinemaException | FuncionNoEncontradaException | SinAsientosDisponiblesException e) {
+            } catch (CinemaException | FuncionNoEncontradaException e) {
                 System.out.println("ERROR: " + e.getMessage());
             }
         } while (opcion != 10);

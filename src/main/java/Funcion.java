@@ -12,7 +12,7 @@ public class Funcion extends Entidad implements Comparable<Funcion>,Cancelable{
     private EstadoFuncion estado;
     private List<Asiento> asientos;
 
-    public Funcion( String codigo,Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase) {
+    public Funcion( String codigo,Pelicula pelicula, Sala sala, LocalDate fecha, LocalTime hora, double precioBase) throws DatoInvalidoException {
         super(codigo);
         this.pelicula = pelicula;
         this.sala = sala;
@@ -30,13 +30,16 @@ public class Funcion extends Entidad implements Comparable<Funcion>,Cancelable{
         this.hora = hora;
         this.precioBase = precioBase;
     }
-    public Asiento buscarAsiento(String codigoAsiento){
-        for(Asiento asiento:asientos){
-        if(asiento.getCodigo().equals(codigoAsiento)){
-            return asiento;
+    public Asiento buscarAsiento(String codigo) throws AsientoNoEncontradoException {
+        if (codigo == null || codigo.isBlank()) {
+            throw new AsientoNoEncontradoException("El código del asiento no puede ser nulo o vacío.");
+        }
+        for (Asiento asiento : asientos) {
+            if (asiento.getCodigo().equalsIgnoreCase(codigo.trim())) {
+                return asiento;
             }
         }
-        return null;
+        throw new AsientoNoEncontradoException("No se encontró el asiento con código: " + codigo);
     }
     public int contarDisponibles(){
         int disponibles =0;

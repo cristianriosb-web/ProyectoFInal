@@ -5,9 +5,9 @@ public class Asiento implements Identificable {
     private EstadoAsiento estado;
 
     public Asiento( char fila, int numero) {
-        this.fila = fila;
+        this.fila = Character.toUpperCase(fila);
         this.numero = numero;
-        this.codigo = ""+fila+numero;
+        this.codigo = "" + this.fila + numero;
         this.estado = EstadoAsiento.DISPONIBLE;
     }
     public Asiento copiar(){
@@ -16,7 +16,10 @@ public class Asiento implements Identificable {
     public boolean estaDisponible(){
         return this.estado == EstadoAsiento.DISPONIBLE;
     }
-    public void ocupar(){
+    public void ocupar() throws AsientoOcupadoException {
+        if (!estaDisponible()) {
+            throw new AsientoOcupadoException("El asiento " + codigo + " ya está ocupado.");
+        }
         this.estado = EstadoAsiento.OCUPADO;
     }
     public void liberar(){

@@ -15,9 +15,10 @@ public class Cinema implements Reportable {
 
     public Cinema(String nombre) {
         this.nombre = nombre;
-        for (TipoCliente tipo : TipoCliente.values()) {
-            descuentos.put(tipo, tipo.getTarifaCliente());
-        }
+        descuentos.put(TipoCliente.GENERAL, 0.0);
+        descuentos.put(TipoCliente.ESTUDIANTE, 20.0);
+        descuentos.put(TipoCliente.INFANTE, 30.0);
+        descuentos.put(TipoCliente.ADULTO_MAYOR, 30.0);
     }
 
     /** Busca cualquier objeto Identificable por código; devuelve null si no lo encuentra. */
@@ -234,7 +235,7 @@ public class Cinema implements Reportable {
     }
 
     public Venta venderEntrada(String codigoFuncion, Cliente cliente, TipoCliente tipoEntrada,
-                               String codigoAsiento) throws CinemaException, FuncionNoEncontradaException, SinAsientosdisponiblesException {
+                               String codigoAsiento) throws CinemaException, FuncionNoEncontradaException, SinAsientosDisponiblesException {
         Validador.noNulo(cliente, "un cliente");
         Validador.noNulo(tipoEntrada, "un tipo de entrada");
         Funcion funcion = buscarFuncion(codigoFuncion);
@@ -242,7 +243,7 @@ public class Cinema implements Reportable {
             throw new FuncionNoDisponibleException("La función " + codigoFuncion + " está " + funcion.getEstado());
         }
         if (!funcion.hayAsientosDisponibles()) {
-            throw new SinAsientosdisponiblesException("La función " + codigoFuncion + " no tiene asientos disponibles");
+            throw new SinAsientosDisponiblesException("La función " + codigoFuncion + " no tiene asientos disponibles");
         }
         Asiento asiento = funcion.buscarAsiento(codigoAsiento);
         asiento.ocupar(); // lanza AsientoOcupadoException si ya está ocupado

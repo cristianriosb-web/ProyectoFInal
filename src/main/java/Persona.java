@@ -2,9 +2,11 @@ public abstract class Persona {
     private String identificacion;
     private String nombre;
 
-    public Persona(String identificacion, String nombre) {
-        this.identificacion = identificacion;
-        this.nombre = nombre;
+    public Persona(String identificacion, String nombre) throws DatoInvalidoException {
+        Validador.texto(identificacion, "identificación");
+        Validador.texto(nombre, "nombre");
+        this.identificacion = identificacion.trim();
+        this.nombre = nombre.trim();
     }
     public String getIdentificacion() {
         return identificacion;
